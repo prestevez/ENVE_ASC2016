@@ -70,4 +70,59 @@ library(ggplot2)
 library(Cairo)
 library(knitr)
 library(lme4)
+library(classInt)
 ```
+
+## Load data
+
+We first load and arrange the area and victim level data
+
+```{r victim-data}
+enve_all <- read.dbf("TR_ENVE_CUES_2014.dbf")
+cat_entidades <- read.csv("cat_entidades.csv", head=TRUE)
+homicidios <- read.csv("homicidios_tasas_2013_b.csv", header=TRUE)
+homicidios <- merge(homicidios, cat_entidades, by="CVE_ENT", all.x=TRUE)
+scode <- read.csv("secode.csv", head=TRUE)
+scode$Code <- scode$Code*10000
+
+# Prepare data for analysis
+# Selecting only the relevant variables
+
+enve_test <- data.frame(extortions=as.integer(as.character(enve_all$P26_10)))
+
+enve_test$id <- as.integer(as.character(enve_all$I_CVE))
+
+enve_test$bribes <- as.integer(as.character(enve_all$P33))
+
+enve_test$CVE_ENT <- as.integer(as.character(enve_all$CVE_ENT))
+
+enve_test$size <- enve_all$ID_ESTRATO
+levels(enve_test$size) <- c("Large", "Medium", "Small", "Micro")
+
+enve_test$sector <- enve_all$SECTOR_FIN
+
+enve_test$tempsub <- as.integer(as.character(enve_all$P1_1B))
+enve_test$subsector <- cut(enve_test$tempsub, scode$Code, right=FALSE)
+levels(enve_test$subsector) <- scode$Sector
+enve_test$restbar <- enve_test$subsector
+
+hotindx <- which(levels(enve_test$restbar) == "HotelsRestBar")
+levels(enve_test$restbar)[-hotindx] <- 0
+levels(enve_test$restbar)[hotindx] <- 1
+labels(enve_test$restbar) <- c("No", "Yes")
+
+enve_test$hotrestbar <- relevel(enve_test$restbar, ref="No")
+enve_test$years <- 2013 - as.numeric(as.character(enve_all$P3))
+
+intyears <- classIntervals(enve_test$years, 5, style="quantile")
+
+enve_test$yearsquant <- cut(enve_test$years, intyears$brks, right=TRUE, include.lowest = TRUE)
+
+enve_test <- merge(enve_test, homicidios, by="CVE_ENT", all.x=TRUE)
+
+enve_test$extortions[is.na(enve_test$extortions)] <- 0
+enve_test$bribes[is.na(enve_test$bribes)] <- 0
+
+```
+
+Next we load incident-level data
