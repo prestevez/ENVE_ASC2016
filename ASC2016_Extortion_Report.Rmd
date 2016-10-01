@@ -1,0 +1,26 @@
+---
+title: "Extortion in Mexico: Who pays and why?"
+author: "Patricio R. Estevez Soto"
+email: "patricio.estevez.14@ucl.ac.uk"
+date: "30/9/2016"
+output:
+  md_document:
+    variant: "markdown"
+pandoc_args: "--smart"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+This document contains the script and results for a research project on extortion against businesses in Mexico.
+
+Previous research has found that extortion against businesses is acutely concentrated on a few businesses who experience more than half of all extortion incidents in the country as repeat extortion victimizations. That project found that the rate at which businesses suffer extortion is mostly determined by their characteristics---such as their age, whether they are a restaurant, the number of corruption incidents they have suffered, and their size---and to a lesser extent, to the characteristics of the state where they are located---which include the state homicide rate and other unmeasured between-state differences.
+
+Nonetheless, that research did not consider that most extortion victims do not comply with extortion demands. Thus this project aims to explore the distribution of successful extortion incidents, and identify the incident, victim and area characteristics associated with a higher likelihood of complying with extortion.
+
+The incident-level characteristics that will be explored are:
+
+- 
