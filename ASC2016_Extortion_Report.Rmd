@@ -90,7 +90,7 @@ scode$Code <- scode$Code*10000
 
 enve_test <- data.frame(extortions=as.integer(as.character(enve_all$P26_10)))
 
-enve_test$id <- as.integer(as.character(enve_all$I_CVE))
+enve_test$id <- as.integer(as.character(enve_all$CVE_UNICA))
 
 enve_test$bribes <- as.integer(as.character(enve_all$P33))
 
@@ -104,18 +104,16 @@ enve_test$sector <- enve_all$SECTOR_FIN
 enve_test$tempsub <- as.integer(as.character(enve_all$P1_1B))
 enve_test$subsector <- cut(enve_test$tempsub, scode$Code, right=FALSE)
 levels(enve_test$subsector) <- scode$Sector
-enve_test$restbar <- enve_test$subsector
 
-hotindx <- which(levels(enve_test$restbar) == "HotelsRestBar")
-levels(enve_test$restbar)[-hotindx] <- 0
-levels(enve_test$restbar)[hotindx] <- 1
-labels(enve_test$restbar) <- c("No", "Yes")
 
-enve_test$hotrestbar <- relevel(enve_test$restbar, ref="No")
+enve_test$hotrestbar <- enve_test$subsector
+hotindx <- which(levels(enve_test$hotrestbar) == "HotelsRestBar")
+levels(enve_test$hotrestbar)[-hotindx] <- "No"
+levels(enve_test$hotrestbar)[hotindx] <- "Yes"
+enve_test$hotrestbar <- relevel(enve_test$hotrestbar, ref="No")
+
 enve_test$years <- 2013 - as.numeric(as.character(enve_all$P3))
-
 intyears <- classIntervals(enve_test$years, 5, style="quantile")
-
 enve_test$yearsquant <- cut(enve_test$years, intyears$brks, right=TRUE, include.lowest = TRUE)
 
 enve_test <- merge(enve_test, homicidios, by="CVE_ENT", all.x=TRUE)
@@ -126,3 +124,12 @@ enve_test$bribes[is.na(enve_test$bribes)] <- 0
 ```
 
 Next we load incident-level data
+
+```{r incident-level}
+enve_incidents_all <- read.dbf("TR_ENVE_DELITOS2014.dbf")
+
+
+# Selecting only those relevant for extortion
+
+
+```
