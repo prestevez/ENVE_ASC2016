@@ -51,4 +51,23 @@ Area-level characteristics:
 
 ## Session info
 
-For reproducibility, we first check details 
+We first check details of the session and system, and for reproducibility, we set the random seed.
+
+```{r session}
+starttime <- proc.time()
+date()
+sessionInfo()
+set.seed(42)
+```
+
+## Load packages
+
+Next we load the packages that we will use.
+
+```{r packages}
+library(foreign)
+library(ggplot2)
+library(Cairo)
+library(knitr)
+library(lme4)
+```
