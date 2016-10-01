@@ -23,4 +23,32 @@ Nonetheless, that research did not consider that most extortion victims do not c
 
 The incident-level characteristics that will be explored are:
 
-- 
+- time of day
+- number of offenders
+- victim's relationship to the offender
+- use of a weapon/type of weapon
+- use of violence
+- whether the incident was reported to the authorities (MP + other)
+- type of extortion
+- what was requested
+- retaliation against business for not complying
+
+The victim-level characteristics are:
+- business type
+- business age
+- business size
+- Victim of corruption
+- number of corruption victimizations, repeat corruption victim
+- number of extortion victimizations
+- repeat extortion victim
+
+Area-level characteristics:
+- State
+- State homicides
+- State population
+
+# Set up, data input and pre-process
+
+## Session info
+
+For reproducibility, we first check details 
