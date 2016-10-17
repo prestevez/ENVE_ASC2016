@@ -4,4 +4,4 @@ a <- 100
 
 a
 
-print(c(a,"hello"))
+#print(c(a,"hello"))
