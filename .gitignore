@@ -1,6 +1,20 @@
+# R stuff
+
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 *.Rproj
-Test.*
+.DS_Store
+
+# Directories
+
+cache/
+stata/
+figure/
+ASC2016_Extortion_Report_cache/
+test_data_prep/
+other_data/
+drafts_and_tests/
+
+# Other files

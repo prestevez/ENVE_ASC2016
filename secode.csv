@@ -1,0 +1,23 @@
+Sector,Code
+Mining,21
+Utilities,22
+Construction,23
+Manufacturing,31
+Manufacturing,32
+Manufacturing,33
+Wholesale,43
+Retail,46
+Transport,48
+Transport,49
+Media,51
+Finance,52
+Real estate,53
+Prof. services,54
+Corporate,55
+Maintenance,56
+Education,61
+Health,62
+Leisure,71
+HotelsRestBar,72
+Other,81
+Outer,90
