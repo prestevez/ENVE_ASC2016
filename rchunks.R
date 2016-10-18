@@ -3,10 +3,16 @@
 
 library(foreign)
 library(ggplot2)
-#library(Cairo)
+library(Cairo)
 library(knitr)
 library(lme4)
 library(classInt)
+library(car)
+library(texreg)
+library(xtable)
+library(lmtest)
+library(pscl)
+library(sjstats)
 
 ###############################################################################
 # {r victim-level}
@@ -1711,12 +1717,15 @@ confint(m1_l2)
 
 ## Need to create null models
 
+## HERE need to run null ### Try on ucl machine.. taking too long
+
 m1_l2_null <- glmer(complied_bin ~ 1
                       (1|CVE_UNICA),
                     data=m1df,
                     family = "binomial")
 
-## HERE need to run null ### Try on ucl machine.. taking too long
+## need to run only area levels.. but only for three level model no?
+## If we know its gonna be better dont waste time
 
 # droptest
 m1_l2_dropped <- drop1(m1_l2, test="Chisq")
