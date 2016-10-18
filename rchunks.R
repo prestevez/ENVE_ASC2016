@@ -1225,7 +1225,7 @@ cv.test(t401)
 ###### models and see if can drop levels or use anova)
 
 
-# not excluding weapons, violence or offender variables.
+# not excluding weapons, violence or offender variables
 
 excnames <- quote(c(complied_bin,
                       extortion_type, request,
@@ -1727,11 +1727,6 @@ m1_l2_null <- glmer(complied_bin ~
 
 summary(m1_l2_null)
 
-m1_l1_null <- glm(complied_bin ~ 1,
-                    data=m1df,
-                    family = "binomial")
-
-summary(m1_l1_null)
 
 ## need to run only area levels.. but only for three level model no?
 ## If we know its gonna be better dont waste time
@@ -1757,8 +1752,6 @@ kable(anova(m1_l2, m1_l2_null, m1_l1_null, test="LRT"))
 
 ## RMSE for the fitted values
 
-rmses <- data.frame(model=NA)
-
 m1_l2_residuals <- residuals(m1_l2, type="response")
 
 m1_l2_rmses <- c("m1_l2",
@@ -1779,33 +1772,39 @@ m1_l2_ob_pred <- data.frame(Observed=m1df$complied_bin,
 ggplot(m1_l2_ob_pred, aes(Observed, Predicted)) +
   geom_boxplot() +
   theme_bw() +
-  ggtitle("Compliance with extortion demands:\nObserved vs. predicted")
+  ggtitle("Compliance with extortion demands:\nObserved vs. predicted") + 
+  geom_jitter(alpha = .2)
 
 
 # FOREST PLOTS?
+
+# customize sjplots
+set_theme(theme = "blank", 
+          geom.label.size = 0, 
+          axis.textsize.x = .7, 
+          axis.title.size = .9,
+          axis.angle.x=90,
+          axis.textsize.y = 0)
+
 
 # Random intercepts
 sjp.glmer(m1_l2, show.values = FALSE, sort.est= TRUE)
 
 # Forest plots
+set_theme(theme = "blank", 
+          geom.label.size = 0, 
+          axis.textsize.x = .7, 
+          axis.title.size = .9,
+          axis.angle.x=90,
+          axis.textsize.y = .7)
+
 sjp.glmer(m1_l2, type="fe", show.values = FALSE)
 sjp.glmer(m1_l2, type="fe", show.values = FALSE, sort.est = TRUE)
 
-
 ## Stepwise selection of variables
 
-sm1_l2 <- step(m1_l2)
+#sm1_l2 <- step(m1_l2)
 
-summary(sm1_l2)
-print(xtable(sm1_l2), type="html")
-htmlreg(sm1_l2)
-screenreg(sm1_l2)
-
-htmlreg(list(m1_l2, sm1_l2))
-screenreg(list(m1_l2, sm1_l2))
-
-sm1_l2$anova
-kable(sm1_l2$anova)
 
 ## Exclude state then business level variables
 
@@ -1913,83 +1912,9 @@ screenreg(list(m1, m1_l2))
 
 lrtest(m1_l2, m1)
 
-### ICC for glmer
-
-library(sjstats)
-icc(m1_l2)
-
-print(icc(m1_l2), comp="var")
-
-get_re_var(m1_l2, comp = "sigma_2")
-
-qqmath(ranef(m1_l2))
-
-write.dta(enve_incvic, "enve_incvic.dta")
-
-summary(m1_l2)
-
-## number of observations per individuals
-
-length(unique(m1df$CVE_UNICA))
-table(table(m1df$CVE_UNICA))
-min(table(m1df$CVE_UNICA))
-max(table(m1df$CVE_UNICA))
-mean(table(m1df$CVE_UNICA))
-sum(table(m1df$CVE_UNICA))
-
-# number of observations per state
-length(unique(m1df$CVE_ENT))
-table(m1df$CVE_ENT)
-sum(table(m1df$CVE_ENT))
-min(table(m1df$CVE_ENT))
-max(table(m1df$CVE_ENT))
-mean(table(m1df$CVE_ENT))
-
-# number of individuals per state
-
-IperG <- with(m1df, tapply(CVE_UNICA, CVE_ENT, 
-                  FUN = function(x) length(unique(x))))
-sum(IperG)
-min(IperG)
-max(IperG)
-mean(IperG)
-
-summary(m1_l2)
-
-install.packages("sjPlot")
-library(sjPlot)
-install.packages("arm")
-
-fit <- m1_l2
-
-set_theme(theme = "forest", 
-          geom.label.size = 3, 
-          axis.textsize = .9, 
-          axis.title.size = .9)
-
-sjp.glmer(fit, y.offset = .4, sort.est = "sort.all", facet.grid=FALSE)
-
-sjp.glmer(fit, type = "fe", sort.est = "sort.all", facet.grid=FALSE)
-
-sjp.glmer(fit, type = "eff", show.ci = TRUE)
-
-sjp.glmer(fit, type = "pred", vars=c("extortion_type","request"), 
-          show.ci = TRUE)
-
-sjp.glmer(fit, type = "pred", vars=c("extortion_type","hotrestbar"), 
-          show.ci = TRUE)
-
-sjp.glmer(fit, type = "pred", vars=c("hotrestbar","extortion_type"), 
-          show.ci = TRUE)
-
-sjp.glmer(fit, type = "pred", vars=c("hotrestbar","request"), 
-          show.ci = TRUE)
-
-sjp.glmer(fit, type = "pred", vars=c("logpop"), show.ci = TRUE)
+starttime <- proc.time()
+endtime <- proc.time()
+time <- endtime - starttime
 
 
-sjp.glmer(fit, type = "pred", 
-          vars=c("request","extortion_type"), 
-          show.ci = TRUE,
-          facet.grid = FALSE)
-
+print(paste("the script took", round(time[3]/60,2), "minutes to run.", sep=" "))
