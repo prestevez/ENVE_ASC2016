@@ -11,7 +11,7 @@
 
 cache/
 stata/
-figure/
+#figure/
 ASC2016_Extortion_Report_cache/
 test_data_prep/
 other_data/
