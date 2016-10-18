@@ -13,6 +13,7 @@ library(xtable)
 library(lmtest)
 library(pscl)
 library(sjstats)
+library(sjPlot)
 
 ###############################################################################
 # {r victim-level}
@@ -1719,10 +1720,18 @@ confint(m1_l2)
 
 ## HERE need to run null ### Try on ucl machine.. taking too long
 
-m1_l2_null <- glmer(complied_bin ~ 1
+m1_l2_null <- glmer(complied_bin ~ 
                       (1|CVE_UNICA),
                     data=m1df,
                     family = "binomial")
+
+summary(m1_l2_null)
+
+m1_l1_null <- glm(complied_bin ~ 1,
+                    data=m1df,
+                    family = "binomial")
+
+summary(m1_l1_null)
 
 ## need to run only area levels.. but only for three level model no?
 ## If we know its gonna be better dont waste time
@@ -1732,26 +1741,18 @@ m1_l2_dropped <- drop1(m1_l2, test="Chisq")
 kable(m1_l2_dropped)
 
 # compare with null
-lrtest(m1_l2, m1_l2_null)
-kable(lrtest(m1_l2, m1_l2_null))
+lrtest(m1_l2_null, m1_l2)
+kable(lrtest(m1_l2_null, m1_l2))
 
-waldtest(m1_l2, m1_l2_null)
-kable(waldtest(m1_l2, m1_l2_null))
-
-waldtest(m1_l2, m1_l2_null, test="Chisq")
-kable(waldtest(m1_l2, m1_l2_null, test="Chisq"))
+lrtest(m1_l1_null,m1_l2_null, m1_l2)
+kable(lrtest(m1_l1_null,m1_l2_null, m1_l2))
 
 # compare sequentially
-anova(m1_l2, m1_l2_null, test="Rao")
-kable(anova(m1_l2, m1_l2_null, test="Rao"))
-
 anova(m1_l2, m1_l2_null, test="LRT")
 kable(anova(m1_l2, m1_l2_null, test="LRT"))
 
-### Drop terms sequentially? Might take too long
-
-# Test for multicollinearity
-#vif(m1_l2)
+anova(m1_l2, m1_l2_null, m1_l1_null, test="LRT")
+kable(anova(m1_l2, m1_l2_null, m1_l1_null, test="LRT"))
 
 
 ## RMSE for the fitted values
@@ -1782,6 +1783,14 @@ ggplot(m1_l2_ob_pred, aes(Observed, Predicted)) +
 
 
 # FOREST PLOTS?
+
+# Random intercepts
+sjp.glmer(m1_l2, show.values = FALSE, sort.est= TRUE)
+
+# Forest plots
+sjp.glmer(m1_l2, type="fe", show.values = FALSE)
+sjp.glmer(m1_l2, type="fe", show.values = FALSE, sort.est = TRUE)
+
 
 ## Stepwise selection of variables
 
