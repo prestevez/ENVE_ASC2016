@@ -13,7 +13,7 @@ pandoc_args: "--smart"
 knitr::opts_chunk$set(echo = TRUE,
                       comment="",
                       cache=TRUE,
-                      dev=c("CairoPDF", "png")
+                      dev=c("CairoPDF", "png"),
                       error=TRUE)
 ```
 
