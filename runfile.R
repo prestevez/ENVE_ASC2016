@@ -1,3 +1,3 @@
 require(knitr)
 
-knit("ASC2016_Extortion_report.Rmd")
+knit("ASC2016_Extortion_Report.Rmd")
