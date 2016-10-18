@@ -13,7 +13,8 @@ pandoc_args: "--smart"
 knitr::opts_chunk$set(echo = TRUE,
                       comment="",
                       cache=TRUE,
-                      dev=c("CairoPDF", "png"))
+                      dev=c("CairoPDF", "png")
+                      error=TRUE)
 ```
 
 # Introduction
@@ -64,7 +65,7 @@ starttime <- proc.time()
 date()
 sessionInfo()
 set.seed(42)
-options(scipen=99999)
+#options(scipen=99999)
 ```
 
 ## Load packages and functions
@@ -1570,7 +1571,7 @@ kable(waldtest(m1_no_viol_off_wea, m1_nostate_nobus, m1_nostate, m1, test="Chisq
 htmlreg(list(m1,sm1, m1_nostate, m1_nostate_nobus,m1_no_viol_off_wea))
 screenreg(list(m1,sm1, m1_nostate, m1_nostate_nobus,m1_no_viol_off_wea))
 
-m1_null <- glm(complied_bin ~ , data=m1df, family="binomial")
+m1_null <- glm(complied_bin ~ 1, data=m1df, family="binomial")
 
 # Null model
 anova(m1, m1_null, test="Chisq")
