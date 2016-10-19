@@ -13,7 +13,7 @@ pandoc_args: "--smart"
 knitr::opts_chunk$set(echo = TRUE,
                       comment="",
                       cache=TRUE,
-                      dev=c("CairoPDF", "png"),
+                      dev=c("png", "CairoPDF"),
                       error=TRUE)
 ```
 
@@ -81,11 +81,12 @@ library(lme4)
 library(classInt)
 library(car)
 library(texreg)
-library(xtable)
+#library(xtable)
 library(lmtest)
 library(pscl)
 library(sjstats)
 library(sjPlot)
+library(arm)
 ```
 
 ```{r functions}
@@ -116,6 +117,22 @@ id.test <- function(x)
   names(pv95) <- "95% Chi-sq"
 
   return(c(index, pval, df, pv95))
+}
+
+icc_3level <- function(model){
+  # Takes a three level lmer and provides the ICC
+  # for level 2 and level 3
+  require(sjstats)
+
+  icc_l2 <- sum(get_re_var(model))/(sum(get_re_var(model)) +
+                          get_re_var(model, "sigma_2"))
+  names(icc_l2) <- names(icc(model))[1]
+
+  icc_l3 <- get_re_var(model)[2]/(sum(get_re_var(model)) +
+                          get_re_var(model, "sigma_2"))
+  names(icc_l3) <- names(icc(model))[2]
+
+  return(c(icc_l2, icc_l3))
 }
 
 ```
@@ -1394,8 +1411,8 @@ m1 <- glm(complied_bin ~
 summary(m1)
 pR2(m1)
 
-print(xtable(m1), type="html")
-htmlreg(m1)
+#print(xtable(m1), type="html")
+#htmlreg(m1)
 screenreg(m1)
 
 nobs(m1)
@@ -1468,11 +1485,11 @@ ggplot(m1_ob_pred, aes(Observed, Predicted)) +
 sm1 <- step(m1)
 
 summary(sm1)
-print(xtable(sm1), type="html")
-htmlreg(sm1)
+#print(xtable(sm1), type="html")
+#htmlreg(sm1)
 screenreg(sm1)
 
-htmlreg(list(m1, sm1))
+#htmlreg(list(m1, sm1))
 screenreg(list(m1, sm1))
 
 sm1$anova
@@ -1568,21 +1585,23 @@ kable(waldtest(m1_no_viol_off_wea, m1_nostate_nobus, m1_nostate, m1))
 waldtest(m1_no_viol_off_wea, m1_nostate_nobus, m1_nostate, m1, test="Chisq")
 kable(waldtest(m1_no_viol_off_wea, m1_nostate_nobus, m1_nostate, m1, test="Chisq"))
 
-htmlreg(list(m1,sm1, m1_nostate, m1_nostate_nobus,m1_no_viol_off_wea))
+#htmlreg(list(m1,sm1, m1_nostate, m1_nostate_nobus,m1_no_viol_off_wea))
 screenreg(list(m1,sm1, m1_nostate, m1_nostate_nobus,m1_no_viol_off_wea))
 
 m1_null <- glm(complied_bin ~ 1, data=m1df, family="binomial")
 
 # Null model
-anova(m1, m1_null, test="Chisq")
-kable(anova(m1, m1_null, test="Chisq"))
+anova(m1_null, m1, test="Chisq")
+kable(anova(m1_null, m1, test="Chisq"))
 
-anova(m1, m1_null, test="LRT")
-kable(anova(m1, m1_null, test="LRT"))
+anova(m1_null, m1, test="LRT")
+kable(anova(m1_null, m1, test="LRT"))
 
 lrtest(m1_null, m1)
 kable(lrtest(m1_null, m1))
 ```
+
+## Two level model
 
 Now we try a two-level model
 
@@ -1639,7 +1658,7 @@ max(IperG)
 mean(IperG)
 
 ## print m1_l2
-htmlreg(m1_l2)
+#htmlreg(m1_l2)
 screenreg(m1_l2)
 
 nobs(m1_l2)
@@ -1712,15 +1731,17 @@ set_theme(theme = "blank",
 sjp.glmer(m1_l2, type="fe", show.values = FALSE)
 sjp.glmer(m1_l2, type="fe", show.values = FALSE, sort.est = TRUE)
 
-htmlreg(list(m1, m1_l2))
+#htmlreg(list(m1, m1_l2))
 screenreg(list(m1, m1_l2))
 
-lrtest(m1_l2, m1)
-kable(lrtest(m1_l2, m1))
+lrtest(m1, m1_l2)
+kable(lrtest(m1, m1_l2))
 
 anova(m1_l2, m1, test="LRT")
 kable(anova(m1_l2, m1, test="LRT"))
 ```
+
+## Three level model
 
 Now we try the three-level configuration
 
@@ -1754,6 +1775,10 @@ get_re_var(m1_l3)[2] /( sum(get_re_var(m1_l3)) +
 
 print(icc(m1_l3), comp="var")
 
+# Try using the icc_3level function
+
+icc_3level(m1_l3)
+
 ## Describe data structure
 
 ## number of observations per individuals
@@ -1783,7 +1808,7 @@ max(IperG)
 mean(IperG)
 
 ## print m1_l3
-htmlreg(m1_l3)
+#htmlreg(m1_l3)
 screenreg(m1_l3)
 
 nobs(m1_l3)
@@ -1803,6 +1828,11 @@ m1_l3_null <- glmer(complied_bin ~
                     family = "binomial")
 
 summary(m1_l3_null)
+
+print(icc(m1_l3_null), comp="var")
+
+icc_3level(m1_l3_null)
+
 
 lrtest(m1_l3_null, m1_l3)
 kable(lrtest(m1_l3_null, m1_l3))
@@ -1873,26 +1903,26 @@ set_theme(theme = "blank",
 sjp.glmer(m1_l3, type="fe", show.values = FALSE)
 sjp.glmer(m1_l3, type="fe", show.values = FALSE, sort.est = TRUE)
 
-htmlreg(list(m1, m1_l3))
+#htmlreg(list(m1, m1_l3))
 screenreg(list(m1, m1_l3))
 
-htmlreg(list(m1, m1_l2, m1_l3))
+#htmlreg(list(m1, m1_l2, m1_l3))
 screenreg(list(m1, m1_l2, m1_l3))
 
-lrtest(m1_l3, m1)
-kable(lrtest(m1_l3, m1))
+lrtest(m1, m1_l3)
+kable(lrtest(m1, m1_l3))
 
 anova(m1_l3, m1, test="LRT")
 kable(anova(m1_l3, m1, test="LRT"))
 
-lrtest(m1_l3, m1_l2, m1)
-kable(lrtest(m1_l3, m1_l2, m1))
+lrtest(m1, m1_l2, m1_l3)
+kable(lrtest(m1, m1_l2, m1_l3))
 
 anova(m1_l3, m1_l2, m1, test="LRT")
 kable(anova(m1_l3, m1_l2, m1, test="LRT"))
 
-lrtest(m1_l3, m1_l2)
-kable(lrtest(m1_l3, m1_l2))
+lrtest(m1_l2, m1_l3)
+kable(lrtest(m1_l2, m1_l3))
 
 anova(m1_l3, m1_l2, test="LRT")
 kable(anova(m1_l3, m1_l2, test="LRT"))
@@ -2001,7 +2031,7 @@ kable(anova(m1_l3_null, m1_l3_no_viol_off_wea, m1_l3_nostate_nobus,
         m1_l3_nostate, m1_l3, test="LRT"))
 
 
-htmlreg(list(m1_l3,sm1_l3, m1_l3_nostate, m1_l3_nostate_nobus,
+#htmlreg(list(m1_l3,sm1_l3, m1_l3_nostate, m1_l3_nostate_nobus,
              m1_l3_no_viol_off_wea, m1_l3_null))
 
 screenreg(list(m1_l3,sm1_l3, m1_l3_nostate, m1_l3_nostate_nobus,
@@ -2012,6 +2042,7 @@ screenreg(list(m1_l3,sm1_l3, m1_l3_nostate, m1_l3_nostate_nobus,
 
  FOR LATER: the least missing excluding "with violence" and "offender" and "weapons" variables.
 
+# Benchmark stats
 
 ```{r timing}
 endtime <- proc.time()

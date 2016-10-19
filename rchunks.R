@@ -1918,3 +1918,48 @@ time <- endtime - starttime
 
 
 print(paste("the script took", round(time[3]/60,2), "minutes to run.", sep=" "))
+
+
+### Calculate proportions of times paid by business
+
+busids <- unique(enve_incvic$CVE_UNICA)
+
+timesextort <- with(enve_incvic,
+                    tapply(CVE_UNICA, CVE_UNICA, FUN = length))
+
+propdf <- data.frame(busids, timesextort)
+
+View(propdf)
+
+summary(as.integer(enve_incvic$complied_bin)-1)
+
+timespaid <- with(enve_incvic,
+                    tapply(complied_bin,
+                           CVE_UNICA, 
+                           FUN = function(x) sum(as.integer(x)-1)))
+
+propdf <- cbind(propdf, timespaid)
+
+summary(propdf)
+table(timespaid)
+
+summary(enve_incvic$complied_bin)
+
+table(enve_incvic$complied_bin)
+
+t <-data.frame(unlist(with(enve_incvic, 
+                    tapply(complied_bin, CVE_UNICA, FUN = table))))
+View(t)
+evenids <- seq(2,nrow(t), 2)
+oddids <- seq(1,nrow(t)-1, 2)
+
+df <- data.frame(busids, Yes=t[evenids,1], No=t[oddids,1])
+
+View(df)
+
+df$count <- df$Yes+df$No
+df$proppaid <- (df$Yes/df$count)*100 
+
+table(df$count)
+table(timesextort)
+table(df$proppaid)

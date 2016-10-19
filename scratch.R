@@ -12,7 +12,8 @@ packages <- c("foreign",
               "pscl",
               "sjstats",
               "sjPlot",
-              "rmarkdown")
+              "rmarkdown",
+              "arm")
 
 
 packages %in% rownames(installed.packages())
