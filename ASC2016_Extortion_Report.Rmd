@@ -2032,7 +2032,7 @@ kable(anova(m1_l3_null, m1_l3_no_viol_off_wea, m1_l3_nostate_nobus,
 
 
 #htmlreg(list(m1_l3,sm1_l3, m1_l3_nostate, m1_l3_nostate_nobus,
-             m1_l3_no_viol_off_wea, m1_l3_null))
+#             m1_l3_no_viol_off_wea, m1_l3_null))
 
 screenreg(list(m1_l3,sm1_l3, m1_l3_nostate, m1_l3_nostate_nobus,
                m1_l3_no_viol_off_wea, m1_l3_null))
