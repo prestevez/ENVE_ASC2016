@@ -4,7 +4,7 @@
 
 *Patricio R. Estévez Soto*  
 
-## Versión 0.1
+## Versión 0.1 [![DOI](https://zenodo.org/badge/69736722.svg)](https://zenodo.org/badge/latestdoi/69736722)
 
 Estas instrucciones detallan brevemente el procedimiento necesario para correr exitosamente los scripts diseñados para el análisis de la ENVE 2014 en R.
 
