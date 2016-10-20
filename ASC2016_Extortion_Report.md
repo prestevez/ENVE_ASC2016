@@ -61,7 +61,7 @@ date()
 ```
 
 ```
-[1] "Wed Oct 19 16:56:36 2016"
+[1] "Thu Oct 20 15:47:11 2016"
 ```
 
 ```r
@@ -85,36 +85,37 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] sjPlot_2.1.0    sjstats_0.5.0   pscl_1.4.9      lattice_0.20-33
- [5] MASS_7.3-45     lmtest_0.9-34   zoo_1.7-13      xtable_1.8-2   
- [9] texreg_1.36.7   car_2.1-3       classInt_0.1-23 lme4_1.1-12    
-[13] Matrix_1.2-6    Cairo_1.5-9     ggplot2_2.1.0   foreign_0.8-67 
-[17] knitr_1.14     
+ [1] arm_1.9-1       sjPlot_2.1.0    sjstats_0.5.0   pscl_1.4.9     
+ [5] lattice_0.20-33 MASS_7.3-45     lmtest_0.9-34   zoo_1.7-13     
+ [9] xtable_1.8-2    texreg_1.36.7   car_2.1-3       classInt_0.1-23
+[13] lme4_1.1-12     Matrix_1.2-6    Cairo_1.5-9     ggplot2_2.1.0  
+[17] foreign_0.8-67  knitr_1.14     
 
 loaded via a namespace (and not attached):
- [1] stringdist_0.9.4.2 modeltools_0.2-21  coin_1.1-2        
- [4] purrr_0.2.2        reshape2_1.4.1     haven_1.0.0       
- [7] splines_3.3.0      colorspace_1.2-6   stats4_3.3.0      
-[10] mgcv_1.8-12        survival_2.39-5    e1071_1.6-7       
-[13] nloptr_1.0.4       DBI_0.5-1          multcomp_1.4-6    
-[16] plyr_1.8.4         effects_3.1-1      stringr_1.1.0     
-[19] MatrixModels_0.4-1 sjmisc_2.0.0       munsell_0.4.3     
-[22] gtable_0.2.0       mvtnorm_1.0-5      psych_1.6.9       
-[25] codetools_0.2-14   evaluate_0.9       labeling_0.3      
-[28] SparseM_1.72       quantreg_5.29      pbkrtest_0.4-6    
-[31] parallel_3.3.0     class_7.3-14       highr_0.6         
-[34] broom_0.4.1        TH.data_1.0-7      Rcpp_0.12.7       
-[37] scales_0.4.0       formatR_1.4        mnormt_1.5-4      
-[40] digest_0.6.10      stringi_1.1.1      dplyr_0.5.0       
-[43] grid_3.3.0         tools_3.3.0        sandwich_2.3-4    
-[46] magrittr_1.5       tibble_1.2         tidyr_0.6.0       
-[49] assertthat_0.1     minqa_1.2.4        R6_2.1.2          
-[52] nnet_7.3-12        nlme_3.1-128      
+ [1] Rcpp_0.12.7        stringdist_0.9.4.2 mvtnorm_1.0-5     
+ [4] tidyr_0.6.0        class_7.3-14       assertthat_0.1    
+ [7] digest_0.6.10      psych_1.6.9        R6_2.1.2          
+[10] plyr_1.8.4         MatrixModels_0.4-1 stats4_3.3.0      
+[13] evaluate_0.9       coda_0.18-1        e1071_1.6-7       
+[16] highr_0.6          lazyeval_0.2.0     multcomp_1.4-6    
+[19] minqa_1.2.4        SparseM_1.72       nloptr_1.0.4      
+[22] labeling_0.3       splines_3.3.0      stringr_1.1.0     
+[25] munsell_0.4.3      broom_0.4.1        mnormt_1.5-4      
+[28] mgcv_1.8-12        nnet_7.3-12        tibble_1.2        
+[31] coin_1.1-2         codetools_0.2-14   dplyr_0.5.0       
+[34] sjmisc_2.0.0       grid_3.3.0         nlme_3.1-128      
+[37] gtable_0.2.0       DBI_0.5-1          magrittr_1.5      
+[40] formatR_1.4        scales_0.4.0       stringi_1.1.1     
+[43] reshape2_1.4.1     effects_3.1-1      sandwich_2.3-4    
+[46] TH.data_1.0-7      RColorBrewer_1.1-2 tools_3.3.0       
+[49] purrr_0.2.2        abind_1.4-5        parallel_3.3.0    
+[52] pbkrtest_0.4-6     survival_2.39-5    colorspace_1.2-6  
+[55] haven_1.0.0        quantreg_5.29      modeltools_0.2-21 
 ```
 
 ```r
 set.seed(42)
-#options(scipen=99999)
+options(scipen=0)
 ```
 
 ## Load packages and functions
@@ -14454,110 +14455,58 @@ Random effects:
 Number of obs: 635, groups:  CVE_UNICA, 522; CVE_ENT, 32
 
 Fixed effects:
-                                     Estimate    Std. Error z value
-(Intercept)                          -31.8216     3898.7470  -0.008
-extortion_typeInternet                 4.5192       37.5903   0.120
-extortion_typeStreet                  16.1958       12.4643   1.299
-extortion_typePremises               307.9011 18612671.8610   0.000
-extortion_typeCobro de piso          -11.3458       28.1810  -0.403
-extortion_typeOther                   23.3542       17.7709   1.314
-requestMoney                          29.8596     3898.6693   0.008
-requestNothing                        26.8610     3898.6869   0.007
-requestProduct                        28.6457     3898.7687   0.007
-monthFebruary                        -26.5584       24.7456  -1.073
-monthMarch                            -8.3190       15.7418  -0.528
-monthApril                           -24.8553       20.5324  -1.210
-monthMay                             -13.9202       14.8351  -0.938
-monthJune                            -13.3334       12.9426  -1.030
-monthJuly                            -15.1077       14.6532  -1.031
-monthAugust                          -32.1456       29.5819  -1.087
-monthSeptember                       -14.3944       14.8097  -0.972
-monthOctober                         -15.0748       21.1436  -0.713
-monthNovember                         -5.4850       12.5052  -0.439
-monthDecember                        -20.2894       21.3335  -0.951
-monthNONE                            -15.1146       51.6991  -0.292
-timeAfternoon                         -0.6609        8.7190  -0.076
-timeEvening                           -0.2850       12.7344  -0.022
-timeNight                             13.3693       24.3385   0.549
-timeDK/DA                             16.2652       58.0272   0.280
-n_offenders2                           3.9493        9.6307   0.410
-n_offenders3                           5.1294       15.0231   0.341
-n_offenders4                          17.4046       46.1819   0.377
-n_offenders5                          29.3976       61.7434   0.476
-n_offenders6+                         -2.9931       31.8842  -0.094
-n_offendersDK/DA                     -17.6287       19.5043  -0.904
-rel_offendersEmployee               -273.7898 18612671.8613   0.000
-rel_offendersBarely known             -5.7935       20.4006  -0.284
-rel_offendersSomewhat known          -52.0926       41.0229  -1.270
-rel_offendersClose acquaintance      -23.0308       33.9461  -0.678
-rel_offendersDK/DA                   -23.0164       33.6634  -0.684
-had_weaponYes                         15.6990       26.2908   0.597
-had_weaponDK/DA                       -4.1508       10.1764  -0.408
-with_violenceYes                      -0.7947       27.6187  -0.029
-with_violenceDK/DA                    11.2926       16.9289   0.667
-reportedYes                           -1.5405       11.0873  -0.139
-rep_extortion_victim1                  1.6932       16.2462   0.104
-bribe_victim1                         -2.8942       15.5188  -0.186
-sizeMedium                            -9.5017       11.8817  -0.800
-sizeSmall                             -4.0249       12.0880  -0.333
-sizeMicro                            -10.0811       13.2052  -0.763
-hotrestbar1                           -4.7919       22.7125  -0.211
-yearsquant(8,16]                      -1.6311       14.1181  -0.116
-yearsquant(16,25]                      2.6624       11.4796   0.232
-yearsquant(25,34]                     -3.8547       15.6888  -0.246
-yearsquant(34,43]                      9.3532       12.0005   0.779
-                                Pr(>|z|)
-(Intercept)                        0.993
-extortion_typeInternet             0.904
-extortion_typeStreet               0.194
-extortion_typePremises             1.000
-extortion_typeCobro de piso        0.687
-extortion_typeOther                0.189
-requestMoney                       0.994
-requestNothing                     0.995
-requestProduct                     0.994
-monthFebruary                      0.283
-monthMarch                         0.597
-monthApril                         0.226
-monthMay                           0.348
-monthJune                          0.303
-monthJuly                          0.303
-monthAugust                        0.277
-monthSeptember                     0.331
-monthOctober                       0.476
-monthNovember                      0.661
-monthDecember                      0.342
-monthNONE                          0.770
-timeAfternoon                      0.940
-timeEvening                        0.982
-timeNight                          0.583
-timeDK/DA                          0.779
-n_offenders2                       0.682
-n_offenders3                       0.733
-n_offenders4                       0.706
-n_offenders5                       0.634
-n_offenders6+                      0.925
-n_offendersDK/DA                   0.366
-rel_offendersEmployee              1.000
-rel_offendersBarely known          0.776
-rel_offendersSomewhat known        0.204
-rel_offendersClose acquaintance    0.497
-rel_offendersDK/DA                 0.494
-had_weaponYes                      0.550
-had_weaponDK/DA                    0.683
-with_violenceYes                   0.977
-with_violenceDK/DA                 0.505
-reportedYes                        0.889
-rep_extortion_victim1              0.917
-bribe_victim1                      0.852
-sizeMedium                         0.424
-sizeSmall                          0.739
-sizeMicro                          0.445
-hotrestbar1                        0.833
-yearsquant(8,16]                   0.908
-yearsquant(16,25]                  0.817
-yearsquant(25,34]                  0.806
-yearsquant(34,43]                  0.436
+                                  Estimate Std. Error z value Pr(>|z|)
+(Intercept)                     -3.182e+01  3.899e+03  -0.008    0.993
+extortion_typeInternet           4.519e+00  3.759e+01   0.120    0.904
+extortion_typeStreet             1.620e+01  1.246e+01   1.299    0.194
+extortion_typePremises           3.079e+02  1.861e+07   0.000    1.000
+extortion_typeCobro de piso     -1.135e+01  2.818e+01  -0.403    0.687
+extortion_typeOther              2.335e+01  1.777e+01   1.314    0.189
+requestMoney                     2.986e+01  3.899e+03   0.008    0.994
+requestNothing                   2.686e+01  3.899e+03   0.007    0.995
+requestProduct                   2.865e+01  3.899e+03   0.007    0.994
+monthFebruary                   -2.656e+01  2.475e+01  -1.073    0.283
+monthMarch                      -8.319e+00  1.574e+01  -0.528    0.597
+monthApril                      -2.486e+01  2.053e+01  -1.210    0.226
+monthMay                        -1.392e+01  1.484e+01  -0.938    0.348
+monthJune                       -1.333e+01  1.294e+01  -1.030    0.303
+monthJuly                       -1.511e+01  1.465e+01  -1.031    0.303
+monthAugust                     -3.215e+01  2.958e+01  -1.087    0.277
+monthSeptember                  -1.439e+01  1.481e+01  -0.972    0.331
+monthOctober                    -1.507e+01  2.114e+01  -0.713    0.476
+monthNovember                   -5.485e+00  1.251e+01  -0.439    0.661
+monthDecember                   -2.029e+01  2.133e+01  -0.951    0.342
+monthNONE                       -1.511e+01  5.170e+01  -0.292    0.770
+timeAfternoon                   -6.609e-01  8.719e+00  -0.076    0.940
+timeEvening                     -2.850e-01  1.273e+01  -0.022    0.982
+timeNight                        1.337e+01  2.434e+01   0.549    0.583
+timeDK/DA                        1.627e+01  5.803e+01   0.280    0.779
+n_offenders2                     3.949e+00  9.631e+00   0.410    0.682
+n_offenders3                     5.129e+00  1.502e+01   0.341    0.733
+n_offenders4                     1.740e+01  4.618e+01   0.377    0.706
+n_offenders5                     2.940e+01  6.174e+01   0.476    0.634
+n_offenders6+                   -2.993e+00  3.188e+01  -0.094    0.925
+n_offendersDK/DA                -1.763e+01  1.950e+01  -0.904    0.366
+rel_offendersEmployee           -2.738e+02  1.861e+07   0.000    1.000
+rel_offendersBarely known       -5.793e+00  2.040e+01  -0.284    0.776
+rel_offendersSomewhat known     -5.209e+01  4.102e+01  -1.270    0.204
+rel_offendersClose acquaintance -2.303e+01  3.395e+01  -0.678    0.497
+rel_offendersDK/DA              -2.302e+01  3.366e+01  -0.684    0.494
+had_weaponYes                    1.570e+01  2.629e+01   0.597    0.550
+had_weaponDK/DA                 -4.151e+00  1.018e+01  -0.408    0.683
+with_violenceYes                -7.947e-01  2.762e+01  -0.029    0.977
+with_violenceDK/DA               1.129e+01  1.693e+01   0.667    0.505
+reportedYes                     -1.540e+00  1.109e+01  -0.139    0.889
+rep_extortion_victim1            1.693e+00  1.625e+01   0.104    0.917
+bribe_victim1                   -2.894e+00  1.552e+01  -0.186    0.852
+sizeMedium                      -9.502e+00  1.188e+01  -0.800    0.424
+sizeSmall                       -4.025e+00  1.209e+01  -0.333    0.739
+sizeMicro                       -1.008e+01  1.321e+01  -0.763    0.445
+hotrestbar1                     -4.792e+00  2.271e+01  -0.211    0.833
+yearsquant(8,16]                -1.631e+00  1.412e+01  -0.116    0.908
+yearsquant(16,25]                2.662e+00  1.148e+01   0.232    0.817
+yearsquant(25,34]               -3.855e+00  1.569e+01  -0.246    0.806
+yearsquant(34,43]                9.353e+00  1.200e+01   0.779    0.436
 ```
 
 ```
@@ -15131,12 +15080,12 @@ Error in anova.merMod(m1_l3_null, m1_l3_no_viol_off_wea, m1_l3_nostate_nobus, : 
 #htmlreg(list(m1_l3,sm1_l3, m1_l3_nostate, m1_l3_nostate_nobus,
 #             m1_l3_no_viol_off_wea, m1_l3_null))
 
-screenreg(list(m1_l3,sm1_l3, m1_l3_nostate, m1_l3_nostate_nobus,
+screenreg(list(m1_l3, m1_l3_nostate, m1_l3_nostate_nobus,
                m1_l3_no_viol_off_wea, m1_l3_null))
 ```
 
 ```
-Error in match(x, table, nomatch = 0L): object 'sm1_l3' not found
+Error in match(x, table, nomatch = 0L): object 'm1_l3_no_viol_off_wea' not found
 ```
 
 
@@ -15152,8 +15101,8 @@ time
 ```
 
 ```
-     user    system   elapsed 
- 5012.589    72.111 64085.505 
+   user  system elapsed 
+519.870   5.408 588.058 
 ```
 
 ```r
@@ -15162,5 +15111,5 @@ print(paste("the script took", round(time[3]/60,2),
 ```
 
 ```
-[1] "the script took 1068.09 minutes to run."
+[1] "the script took 9.8 minutes to run."
 ```
