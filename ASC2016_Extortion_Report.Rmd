@@ -2376,7 +2376,7 @@ kable(lrtest(n1_null, n1))
 
 Now we try a two-level model
 
-```{r two-level-models-with-all}
+```{r two-level-models-with-subsector}
 
 n1_l2 <- glmer(complied_bin ~
             extortion_type +
@@ -2516,7 +2516,7 @@ kable(anova(n1_l2, n1, test="LRT"))
 
 Now we try the three-level configuration
 
-```{r three-level-with-all}
+```{r three-level-with-subsector}
 
 n1_l3 <- glmer(complied_bin ~
             extortion_type +
@@ -2702,7 +2702,7 @@ kable(anova(n1_l3, n1_l2, test="LRT"))
 
 Now test excluding all three level vars and all two level vars to test their influence.
 
-```{r exc-two-and-three}
+```{r exc-two-and-three-subsector}
 
 ## Exclude state then business level variables
 
