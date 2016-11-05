@@ -142,7 +142,7 @@ icc_3level <- function(model){
 We first load and arrange the area and victim level data
 
 ```{r victim-level}
-enve_all <- read.dbf("TR_ENVE_CUES_2014.dbf")
+enve_all <- read.dbf("enve2014cuest_ciega_2014.dbf")
 cat_entidades <- read.csv("cat_entidades.csv", head=TRUE)
 homicidios <- read.csv("homicidios_values.csv", header=TRUE)
 homicidios <- merge(homicidios, cat_entidades, by="CVE_ENT", all.x=TRUE)
@@ -154,24 +154,51 @@ scode$Code <- scode$Code*10000
 
 enve_test <- data.frame(extortions=as.integer(as.character(enve_all$P26_10)))
 
-enve_test$extortion_victim <- factor(enve_test$extortions)
-levels(enve_test$extortion_victim) <- c(0, rep(1, length(levels(enve_test$extortion_victim)) - 1))
+enve_test$extortion_victim <- enve_all$P25_10
+enve_test$extortions[enve_test$extortion_victim == 2] <- 0
+summary(enve_test$extortions)
+table(enve_test$extortions)
 
 enve_test$rep_extortion_victim <- factor(enve_test$extortions)
 levels(enve_test$rep_extortion_victim) <- c(0, 0,
-                                            rep(1, length(levels(enve_test$rep_extortion_victim)) - 2))
+                    rep(1, length(levels(enve_test$rep_extortion_victim)) - 2))
 
-enve_test$CVE_UNICA <- as.integer(as.character(enve_all$CVE_UNICA))
+summary(enve_test$rep_extortion_victim)
+
+
+enve_test$CVE_UNICA <- as.integer(as.character(enve_all$ID_CONSECU))
 
 enve_test$bribes <- as.integer(as.character(enve_all$P33))
+summary(enve_test$bribes)
+
+# 4 bribe cats
+enve_test$bribe1 <- enve_all$P29_1
+enve_test$bribe2 <- enve_all$P30_1
+enve_test$bribe3 <- enve_all$P31_1
+enve_test$bribe4 <- enve_all$P32_1
+
+enve_test$bribes[with(enve_test,
+                        bribe1 == 2 &
+                        bribe2 == 2 &
+                        bribe3 == 2 &
+                        bribe4 == 2)] <- 0
+
+summary(enve_test$bribes)
+
 enve_test$bribe_victim <- factor(enve_test$bribes)
-levels(enve_test$bribe_victim) <- c(0, rep(1, length(levels(enve_test$bribe_victim)) - 1))
+levels(enve_test$bribe_victim) <- c(0,
+                                    rep(1, length(levels(enve_test$bribe_victim)) - 1))
+summary(enve_test$bribe_victim)
 
 enve_test$rep_bribe <- factor(enve_test$bribes)
-levels(enve_test$rep_bribe) <- c(0, 0, rep(1, length(levels(enve_test$rep_bribe)) - 2))
+levels(enve_test$rep_bribe) <- c(0, 0, rep(1,
+                                           length(levels(enve_test$rep_bribe)) - 2))
+summary(enve_test$rep_bribe)
 
 enve_test$bribe_cats <- factor(enve_test$bribes)
-levels(enve_test$bribe_cats) <- c(0, 1, 2, rep("3+", length(levels(enve_test$bribe_cats)) - 3))
+levels(enve_test$bribe_cats) <- c(0, 1, 2, rep("3+",
+                                            length(levels(enve_test$bribe_cats)) - 3))
+summary(enve_test$bribe_cats)
 
 enve_test$CVE_ENT <- as.integer(as.character(enve_all$CVE_ENT))
 
@@ -180,12 +207,45 @@ levels(enve_test$size) <- c("Large", "Medium", "Small", "Micro")
 
 enve_test$sector <- enve_all$SECTOR_FIN
 
+# subsector
 enve_test$tempsub <- as.integer(as.character(enve_all$P1_1B))
 enve_test$subsector <- cut(enve_test$tempsub, scode$Code, right=FALSE)
 levels(enve_test$subsector) <- scode$Sector
 enve_test$subsector <- droplevels(enve_test$subsector)
 enve_test$subsector <- relevel(enve_test$subsector, ref="Retail")
 levels(enve_test$subsector)
+
+enve_test$subsector_safe <- enve_test$subsector
+
+enve_test$subsector <- as.character(enve_test$subsector)
+
+enve_test$subsector[enve_test$subsector %in%
+                      c("Mining",
+                        "Utilities",
+                        "Construction",
+                        "Manufacturing")] <- "Industry"
+
+enve_test$subsector[enve_test$subsector %in%
+                      c("Finance",
+                        "Health",
+                        "Leisure",
+                        "Education")] <- "Services_Low"
+
+enve_test$subsector[enve_test$subsector %in%
+                      c("Media",
+                        "Maintenance",
+                        "Other",
+                        "Corporate")] <- "Services_Mid"
+
+enve_test$subsector[enve_test$subsector %in%
+                      c("Prof. services",
+                        "Real estate")] <- "Services_Hi"
+
+enve_test$subsector <- as.factor(enve_test$subsector)
+enve_test$subsector <- relevel(enve_test$subsector, ref="Retail")
+levels(enve_test$subsector)
+summary(enve_test$subsector)
+
 
 enve_test$hotrestbar <- enve_test$subsector
 hotindx <- which(levels(enve_test$hotrestbar) == "HotelsRestBar")
@@ -202,8 +262,8 @@ enve_test <- merge(enve_test, homicidios, by="CVE_ENT", all.x=TRUE)
 length(enve_test$extortions[is.na(enve_test$extortions)])
 length(enve_test$bribes[is.na(enve_test$bribes)])
 
-enve_test$extortions[is.na(enve_test$extortions)] <- 0
-enve_test$bribes[is.na(enve_test$bribes)] <- 0
+## enve_test$extortions[is.na(enve_test$extortions)] <- 0
+## enve_test$bribes[is.na(enve_test$bribes)] <- 0
 
 
 ```
@@ -211,7 +271,7 @@ enve_test$bribes[is.na(enve_test$bribes)] <- 0
 Next we load incident-level data:
 
 ```{r incident-level}
-enve_incidents_all <- read.dbf("TR_ENVE_DELITOS2014.dbf")
+enve_incidents_all <- read.dbf("enve2014delitos_ciega_2014.dbf")
 
 # Selecting only those relevant for extortion (code 10)
 
@@ -221,7 +281,7 @@ enve_incidents <- enve_incidents_all[enve_incidents_all$delito == 10,]
 
 # Selecting those relevant for our study
 
-incident_df <- data.frame(CVE_UNICA=as.integer(as.character(enve_incidents$CVE_UNICA)))
+incident_df <- data.frame(CVE_UNICA=as.integer(as.character(enve_incidents$ID_CONSECU)))
 
 incident_df$delito <- enve_incidents$delito
 
@@ -237,7 +297,10 @@ incident_df$time <- enve_incidents$M1_3
 levels(incident_df$time) <- c("Morning", "Afternoon", "Evening", "Night", "DK/DA")
 
 incident_df$n_offenders <- enve_incidents$M1_8
-levels(incident_df$n_offenders) <- c(1:5, "6+", "DK/DA")
+summary(incident_df$n_offenders)
+levels(incident_df$n_offenders) <- c(1:3, "4+", "4+", "4+", "DK/DA")
+summary(incident_df$n_offenders)
+
 
 ## Data imputation for missing variables?
 
@@ -318,8 +381,10 @@ levels(incident_df$reported) <- c("No", "Yes", "DK/DA")
 
 incident_df$extortion_type <- as.character(enve_incidents$M5_1)
 incident_df$extortion_type <- as.factor(incident_df$extortion_type)
-levels(incident_df$extortion_type) <- c("Telephone", "Internet", "Street",
-                                        "Premises", "Cobro de piso", "Other")
+levels(incident_df$extortion_type) <- c("Telephone", "Telephone", "Street",
+                                        "Premises", "Cobro de piso", "Telephone")
+levels(incident_df$extortion_type)
+summary(incident_df$extortion_type)
 
 requests <- with(enve_incidents, data.frame(money=M5_2_1, product=M5_2_2,
                                             nothing=M5_2_3, other=M5_2_4))
@@ -1077,7 +1142,31 @@ ggplot(business_level_eda, aes(extortions)) +
   ggtitle("Extortion counts density")
 
 ggplot(business_level_eda, aes(extortions)) +
+  geom_density(adjust=2) +
+  coord_trans(y="sqrt") +
+  theme_bw() +
+  ggtitle("Extortion counts density")
+
+ggplot(business_level_eda, aes(extortions)) +
+  geom_density(adjust=3) +
+  coord_trans(y="sqrt") +
+  theme_bw() +
+  ggtitle("Extortion counts density")
+
+ggplot(business_level_eda, aes(extortions)) +
   geom_histogram(aes(y=..density..), binwidth = 1) + geom_density() +
+  coord_trans(y="sqrt") +
+  theme_bw() +
+  ggtitle("Extortion counts density")
+
+ggplot(business_level_eda, aes(extortions)) +
+  geom_histogram(aes(y=..density..), binwidth = 1) + geom_density(adjust=2) +
+  coord_trans(y="sqrt") +
+  theme_bw() +
+  ggtitle("Extortion counts density")
+
+ggplot(business_level_eda, aes(extortions)) +
+  geom_histogram(aes(y=..density..), binwidth = 1) + geom_density(adjust=3) +
   coord_trans(y="sqrt") +
   theme_bw() +
   ggtitle("Extortion counts density")
@@ -1378,9 +1467,9 @@ First we start with the most restricted not excluding weapons, violence or offen
 ```{r models-with-all}
 
 excnames <- quote(c(complied_bin,
-                      extortion_type, request,
+                      extortion_type,
                       month, time,
-                      n_offenders, rel_offenders,
+                      n_offenders,
                       had_weapon,
                       with_violence,
                       reported,
@@ -1395,9 +1484,9 @@ m1df <- enve_incvic[which(complete.cases(subset(enve_incvic,
 
 ## Single level first
 m1 <- glm(complied_bin ~
-           extortion_type + request +
-           month + time +
-           n_offenders + rel_offenders +
+           extortion_type +
+           time +
+           n_offenders +
            had_weapon +
            with_violence +
            reported +
@@ -1438,11 +1527,40 @@ kable(anova(m1, test="LRT"))
 # Test for multicollinearity
 vif(m1)
 
+# testing month
+month_m1 <- glm(complied_bin ~
+           extortion_type +
+           month + time +
+           n_offenders +
+           had_weapon +
+           with_violence +
+           reported +
+           rep_extortion_victim +
+           bribe_victim +
+           size + hotrestbar + yearsquant +
+           loghoms + logpop,
+         data=m1df,
+         family = "binomial")
+
+summary(month_m1)
+
+lrtest(month_m1)
+waldtest(month_m1)
+waldtest(month_m1, test="Chisq")
+
+anova(m1, month_m1, test="LRT")
+anova(m1, month_m1, test="Chisq")
+
+lrtest(m1, month_m1)
+waldtest(m1, month_m1)
+waldtest(m1, month_m1, test="Chisq")
+
+
 # another test for multicollinearity, but using an lm instead
 lm1 <- lm(as.integer(complied_bin) ~
-           extortion_type + request +
-           month + time +
-           n_offenders + rel_offenders +
+           extortion_type +
+           time +
+           n_offenders +
            had_weapon +
            with_violence +
            reported +
@@ -1503,9 +1621,9 @@ kable(drop1(m1, test="LRT"))
 ## Exclude state then business level variables
 
 m1_nostate <- glm(complied_bin ~
-                    extortion_type + request +
-                    month + time +
-                    n_offenders + rel_offenders +
+                    extortion_type +
+                    time +
+                    n_offenders +
                     had_weapon +
                     with_violence +
                     reported +
@@ -1527,9 +1645,9 @@ waldtest(m1_nostate, m1, test="Chisq")
 kable(waldtest(m1_nostate, m1, test="Chisq"))
 
 m1_nostate_nobus <- glm(complied_bin ~
-                    extortion_type + request +
-                    month + time +
-                    n_offenders + rel_offenders +
+                    extortion_type +
+                    time +
+                    n_offenders +
                     had_weapon +
                     with_violence +
                     reported,
@@ -1559,8 +1677,8 @@ kable(waldtest(m1_nostate_nobus, m1_nostate, m1, test="Chisq"))
 ## without the vars with a lot of missing
 
 m1_no_viol_off_wea <- glm(complied_bin ~
-                          extortion_type + request +
-                          month + time +
+                          extortion_type +
+                          time +
                           reported,
                         data=m1df,
                         family = "binomial")
@@ -1608,9 +1726,9 @@ Now we try a two-level model
 ```{r two-level-models-with-all}
 
 m1_l2 <- glmer(complied_bin ~
-            extortion_type + request +
-            month + time +
-            n_offenders + rel_offenders +
+            extortion_type +
+            time +
+            n_offenders +
             had_weapon +
             with_violence +
             reported +
@@ -1748,9 +1866,9 @@ Now we try the three-level configuration
 ```{r three-level-with-all}
 
 m1_l3 <- glmer(complied_bin ~
-            extortion_type + request +
-            month + time +
-            n_offenders + rel_offenders +
+            extortion_type +
+            time +
+            n_offenders +
             had_weapon +
             with_violence +
             reported +
@@ -1936,9 +2054,9 @@ Now test excluding all three level vars and all two level vars to test their inf
 ## Exclude state then business level variables
 
 m1_l3_nostate <- glmer(complied_bin ~
-                    extortion_type + request +
-                    month + time +
-                    n_offenders + rel_offenders +
+                    extortion_type +
+                    time +
+                    n_offenders +
                     had_weapon +
                     with_violence +
                     reported +
@@ -1960,9 +2078,9 @@ kable(anova(m1_l3_nostate, m1_l3, test="LRT"))
 ## Only incident level
 
 m1_l3_nostate_nobus <- glmer(complied_bin ~
-                  extortion_type + request +
-                    month + time +
-                    n_offenders + rel_offenders +
+                  extortion_type +
+                    time +
+                    n_offenders +
                     had_weapon +
                     with_violence +
                     reported +
@@ -1996,8 +2114,8 @@ kable(anova(m1_l3_null, m1_l3_nostate_nobus, m1_l3_nostate,
 ## without the vars with a lot of missing
 
 m1_l3_no_viol_off_wea <- glmer(complied_bin ~
-                          extortion_type + request +
-                          month + time +
+                          extortion_type +
+                          time +
                           reported +
                           (1|CVE_UNICA) + (1|CVE_ENT),
                         data=m1df,
@@ -2040,7 +2158,658 @@ screenreg(list(m1_l3, m1_l3_nostate, m1_l3_nostate_nobus,
 ```
 
 
- FOR LATER: the least missing excluding "with violence" and "offender" and "weapons" variables.
+# Models with subsector instead of hotrestbar
+
+
+```{r models-with-subsector}
+
+
+## Single level first
+n1 <- glm(complied_bin ~
+           extortion_type +
+           time +
+           n_offenders +
+           had_weapon +
+           with_violence +
+           reported +
+           rep_extortion_victim +
+           bribe_victim +
+           size + hotrestbar + yearsquant +
+           loghoms + logpop,
+         data=m1df,
+         family = "binomial")
+
+summary(n1)
+pR2(n1)
+
+#print(xtable(n1), type="html")
+#htmlreg(n1)
+screenreg(n1)
+
+nobs(n1)
+confint(n1)
+
+# compare with null
+lrtest(n1)
+kable(lrtest(n1))
+
+waldtest(n1)
+kable(waldtest(n1))
+
+waldtest(n1, test="Chisq")
+kable(waldtest(n1, test="Chisq"))
+
+# compare sequentially
+anova(n1, test="Rao")
+kable(anova(n1, test="Rao"))
+
+anova(n1, test="LRT")
+kable(anova(n1, test="LRT"))
+
+# Test for multicollinearity
+vif(n1)
+
+# another test for multicollinearity, but using an lm instead
+ln1 <- lm(as.integer(complied_bin) ~
+           extortion_type +
+           time +
+           n_offenders +
+           had_weapon +
+           with_violence +
+           reported +
+           rep_extortion_victim +
+           bribe_victim +
+           size + hotrestbar + yearsquant +
+           loghoms + logpop,
+         data=m1df)
+
+summary(ln1)
+
+vif(ln1)
+
+## RMSE for the fitted values
+
+rmses <- data.frame(model=NA)
+
+n1_residuals <- residuals(n1, type="response")
+
+rmses$model[1] <- "n1"
+rmses$RMSE <- sqrt(mean(n1_residuals^2))
+rmses$NRMSE <- sqrt(mean(n1_residuals^2))/sd(n1_residuals)
+rmses$CVRMSE <- sqrt(mean(n1_residuals^2))/(max(n1_residuals)-
+                                             min(n1_residuals))
+
+rmses
+kable(rmses)
+
+# Plot observed vs fitted
+n1_ob_pred <- data.frame(Observed=n1df$complied_bin,
+                        Predicted=fitted(n1, type=response))
+
+ggplot(n1_ob_pred, aes(Observed, Predicted)) +
+ geom_boxplot() +
+ theme_bw() +
+ ggtitle("Compliance with extortion demands:\nObserved vs. predicted")
+
+## Stepwise selection of variables
+
+sn1 <- step(n1)
+
+summary(sn1)
+#print(xtable(sn1), type="html")
+#htmlreg(sn1)
+screenreg(sn1)
+
+#htmlreg(list(n1, sn1))
+screenreg(list(n1, sn1))
+
+sn1$anova
+kable(sn1$anova)
+
+## Using drop1 to test single variable exclusions
+
+drop1(n1, test="LRT")
+kable(drop1(n1, test="LRT"))
+
+## Exclude state then business level variables
+
+n1_nostate <- glm(complied_bin ~
+                    extortion_type +
+                    time +
+                    n_offenders +
+                    had_weapon +
+                    with_violence +
+                    reported +
+                    rep_extortion_victim +
+                    bribe_victim +
+                    size + hotrestbar + yearsquant,
+                  data=m1df,
+                  family = "binomial")
+
+summary(n1_nostate)
+
+lrtest(n1_nostate, n1)
+kable(lrtest(n1_nostate, n1))
+
+waldtest(n1_nostate, n1)
+kable(waldtest(n1_nostate, n1))
+
+waldtest(n1_nostate, n1, test="Chisq")
+kable(waldtest(n1_nostate, n1, test="Chisq"))
+
+n1_nostate_nobus <- glm(complied_bin ~
+                    extortion_type +
+                    time +
+                    n_offenders +
+                    had_weapon +
+                    with_violence +
+                    reported,
+                  data=m1df,
+                  family = "binomial")
+
+summary(n1_nostate_nobus)
+
+lrtest(n1_nostate_nobus, n1_nostate)
+kable(lrtest(n1_nostate_nobus, n1_nostate))
+
+waldtest(n1_nostate_nobus, n1_nostate)
+kable(waldtest(n1_nostate_nobus, n1_nostate))
+
+waldtest(n1_nostate_nobus, n1_nostate, test="Chisq")
+kable(waldtest(n1_nostate_nobus, n1_nostate, test="Chisq"))
+
+lrtest(n1_nostate_nobus, n1_nostate, n1)
+kable(lrtest(n1_nostate_nobus, n1_nostate, n1))
+
+waldtest(n1_nostate_nobus, n1_nostate, n1)
+kable(waldtest(n1_nostate_nobus, n1_nostate, n1))
+
+waldtest(n1_nostate_nobus, n1_nostate, n1, test="Chisq")
+kable(waldtest(n1_nostate_nobus, n1_nostate, n1, test="Chisq"))
+
+## without the vars with a lot of missing
+
+n1_no_viol_off_wea <- glm(complied_bin ~
+                          extortion_type +
+                          time +
+                          reported,
+                        data=m1df,
+                        family = "binomial")
+
+summary(n1_no_viol_off_wea)
+
+lrtest(n1_no_viol_off_wea, n1_nostate_nobus)
+kable(lrtest(n1_no_viol_off_wea, n1_nostate_nobus))
+
+waldtest(n1_no_viol_off_wea, n1_nostate_nobus)
+kable(waldtest(n1_no_viol_off_wea, n1_nostate_nobus))
+
+waldtest(n1_no_viol_off_wea, n1_nostate_nobus, test="Chisq")
+kable(waldtest(n1_no_viol_off_wea, n1_nostate_nobus, test="Chisq"))
+
+lrtest(n1_no_viol_off_wea, n1_nostate_nobus, n1_nostate, n1)
+kable(lrtest(n1_no_viol_off_wea, n1_nostate_nobus, n1_nostate, n1))
+
+waldtest(n1_no_viol_off_wea, n1_nostate_nobus, n1_nostate, n1)
+kable(waldtest(n1_no_viol_off_wea, n1_nostate_nobus, n1_nostate, n1))
+
+waldtest(n1_no_viol_off_wea, n1_nostate_nobus, n1_nostate, n1, test="Chisq")
+kable(waldtest(n1_no_viol_off_wea, n1_nostate_nobus, n1_nostate, n1, test="Chisq"))
+
+#htmlreg(list(n1,sn1, n1_nostate, n1_nostate_nobus,n1_no_viol_off_wea))
+screenreg(list(n1,sn1, n1_nostate, n1_nostate_nobus,n1_no_viol_off_wea))
+
+n1_null <- glm(complied_bin ~ 1, data=m1df, family="binomial")
+
+# Null model
+anova(n1_null, n1, test="Chisq")
+kable(anova(n1_null, n1, test="Chisq"))
+
+anova(n1_null, n1, test="LRT")
+kable(anova(n1_null, n1, test="LRT"))
+
+lrtest(n1_null, n1)
+kable(lrtest(n1_null, n1))
+```
+
+## Two level model
+
+Now we try a two-level model
+
+```{r two-level-models-with-all}
+
+n1_l2 <- glmer(complied_bin ~
+            extortion_type +
+            time +
+            n_offenders +
+            had_weapon +
+            with_violence +
+            reported +
+            rep_extortion_victim +
+            bribe_victim +
+            size + hotrestbar + yearsquant +
+            loghoms + logpop +
+            (1|CVE_UNICA),
+          data=m1df,
+          family = "binomial")
+
+summary(n1_l2)
+
+### ICC
+
+icc(n1_l2)
+print(icc(n1_l2), comp="var")
+
+## Describe data structure
+
+## number of observations per individuals
+
+length(unique(n1df$CVE_UNICA))
+table(table(n1df$CVE_UNICA))
+min(table(n1df$CVE_UNICA))
+max(table(n1df$CVE_UNICA))
+mean(table(n1df$CVE_UNICA))
+sum(table(n1df$CVE_UNICA))
+
+# number of observations per state
+length(unique(n1df$CVE_ENT))
+table(n1df$CVE_ENT)
+sum(table(n1df$CVE_ENT))
+min(table(n1df$CVE_ENT))
+max(table(n1df$CVE_ENT))
+mean(table(n1df$CVE_ENT))
+
+# number of individuals per state
+
+IperG <- with(n1df, tapply(CVE_UNICA, CVE_ENT,
+                           FUN = function(x) length(unique(x))))
+sum(IperG)
+min(IperG)
+max(IperG)
+mean(IperG)
+
+## print n1_l2
+#htmlreg(n1_l2)
+screenreg(n1_l2)
+
+nobs(n1_l2)
+confint(n1_l2)
+
+## Two-level Null
+
+n1_l2_null <- glmer(complied_bin ~
+                      (1|CVE_UNICA),
+                    data=m1df,
+                    family = "binomial")
+
+summary(n1_l2_null)
+
+lrtest(n1_l2_null, n1_l2)
+kable(lrtest(n1_l2_null, n1_l2))
+
+lrtest(n1_null,n1_l2_null, n1_l2)
+kable(lrtest(n1_null,n1_l2_null, n1_l2))
+
+# compare sequentially
+anova(n1_l2, n1_l2_null, test="LRT")
+kable(anova(n1_l2, n1_l2_null, test="LRT"))
+
+anova(n1_l2, n1_l2_null, n1_null, test="LRT")
+kable(anova(n1_l2, n1_l2_null, n1_null, test="LRT"))
+
+
+### RMSES
+n1_l2_residuals <- residuals(n1_l2, type="response")
+
+n1_l2_rmses <- c("n1_l2",
+              sqrt(mean(n1_l2_residuals^2)),
+              sqrt(mean(n1_l2_residuals^2))/sd(n1_l2_residuals),
+              sqrt(mean(n1_l2_residuals^2))/
+                          (max(n1_l2_residuals)-min(n1_l2_residuals)))
+
+rmses <- rbind(rmses, n1_l2_rmses)
+
+rmses
+kable(rmses)
+
+# Plot observed vs fitted
+n1_l2_ob_pred <- data.frame(Observed=n1df$complied_bin,
+                         Predicted=fitted(n1_l2, type=response))
+
+ggplot(n1_l2_ob_pred, aes(Observed, Predicted)) +
+  geom_boxplot() +
+  theme_bw() +
+  ggtitle("Compliance with extortion demands:\nObserved vs. predicted")
+
+# FOREST PLOTS?
+# customize sjplots
+set_theme(theme = "blank",
+          geom.label.size = 0,
+          axis.textsize.x = .7,
+          axis.title.size = .9,
+          axis.angle.x=90,
+          axis.textsize.y = 0)
+
+# Random intercepts
+sjp.glmer(n1_l2, show.values = FALSE, sort.est= TRUE)
+# Forest plots
+set_theme(theme = "blank",
+          geom.label.size = 0,
+          axis.textsize.x = .7,
+          axis.title.size = .9,
+          axis.angle.x=90,
+          axis.textsize.y = .7)
+sjp.glmer(n1_l2, type="fe", show.values = FALSE)
+sjp.glmer(n1_l2, type="fe", show.values = FALSE, sort.est = TRUE)
+
+#htmlreg(list(n1, n1_l2))
+screenreg(list(n1, n1_l2))
+
+lrtest(n1, n1_l2)
+kable(lrtest(n1, n1_l2))
+
+anova(n1_l2, n1, test="LRT")
+kable(anova(n1_l2, n1, test="LRT"))
+```
+
+## Three level model
+
+Now we try the three-level configuration
+
+```{r three-level-with-all}
+
+n1_l3 <- glmer(complied_bin ~
+            extortion_type +
+            time +
+            n_offenders +
+            had_weapon +
+            with_violence +
+            reported +
+            rep_extortion_victim +
+            bribe_victim +
+            size + hotrestbar + yearsquant +
+            loghoms + logpop +
+            (1|CVE_UNICA) +
+            (1|CVE_ENT),
+          data=m1df,
+          family = "binomial")
+
+summary(n1_l3)
+
+### ICC for level 2
+sum(get_re_var(n1_l3)) / (sum(get_re_var(n1_l3)) +
+                        get_re_var(n1_l3, "sigma_2"))
+
+### ICC for level 3
+get_re_var(n1_l3)[2] /( sum(get_re_var(n1_l3)) +
+                        get_re_var(n1_l3, "sigma_2"))
+
+print(icc(n1_l3), comp="var")
+
+# Try using the icc_3level function
+
+icc_3level(n1_l3)
+
+## Describe data structure
+
+## number of observations per individuals
+
+length(unique(n1df$CVE_UNICA))
+table(table(n1df$CVE_UNICA))
+min(table(n1df$CVE_UNICA))
+max(table(n1df$CVE_UNICA))
+mean(table(n1df$CVE_UNICA))
+sum(table(n1df$CVE_UNICA))
+
+# number of observations per state
+length(unique(n1df$CVE_ENT))
+table(n1df$CVE_ENT)
+sum(table(n1df$CVE_ENT))
+min(table(n1df$CVE_ENT))
+max(table(n1df$CVE_ENT))
+mean(table(n1df$CVE_ENT))
+
+# number of individuals per state
+
+IperG <- with(n1df, tapply(CVE_UNICA, CVE_ENT,
+                           FUN = function(x) length(unique(x))))
+sum(IperG)
+min(IperG)
+max(IperG)
+mean(IperG)
+
+## print n1_l3
+#htmlreg(n1_l3)
+screenreg(n1_l3)
+
+nobs(n1_l3)
+confint(n1_l3)
+
+# droptest
+n1_l3_dropped <- drop1(n1_l3, test="Chisq")
+kable(n1_l3_dropped)
+
+
+## Three-level Null
+
+n1_l3_null <- glmer(complied_bin ~
+                      (1|CVE_UNICA) +
+                      (1|CVE_ENT),
+                    data=m1df,
+                    family = "binomial")
+
+summary(n1_l3_null)
+
+print(icc(n1_l3_null), comp="var")
+
+icc_3level(n1_l3_null)
+
+
+lrtest(n1_l3_null, n1_l3)
+kable(lrtest(n1_l3_null, n1_l3))
+
+lrtest(n1_null,n1_l2_null,n1_l3_null, n1_l3)
+kable(lrtest(n1_null,n1_l2_null,n1_l3_null, n1_l3))
+
+lrtest(n1_null,n1_l2_null,n1_l3_null, n1_l3)
+kable(lrtest(n1_null,n1_l2_null,n1_l3_null, n1_l3))
+
+lrtest(n1_null,n1_l2_null,n1_l3_null)
+kable(lrtest(n1_null,n1_l2_null,n1_l3_null))
+
+# compare sequentially
+anova(n1_l3, n1_l3_null, test="LRT")
+kable(anova(n1_l3, n1_l3_null, test="LRT"))
+
+anova(n1_l3, n1_l3_null, n1_null, test="LRT")
+kable(anova(n1_l3, n1_l3_null, n1_null, test="LRT"))
+
+anova(n1_l3_null, n1_null, test="LRT")
+kable(anova(n1_l3_null, n1_null, test="LRT"))
+
+anova(n1_l3_null, n1_l2_null, n1_null, test="LRT")
+kable(anova(n1_l3_null, n1_l2_null, n1_null, test="LRT"))
+
+### RMSES
+n1_l3_residuals <- residuals(n1_l3, type="response")
+
+n1_l3_rmses <- c("n1_l3",
+              sqrt(mean(n1_l3_residuals^2)),
+              sqrt(mean(n1_l3_residuals^2))/sd(n1_l3_residuals),
+              sqrt(mean(n1_l3_residuals^2))/
+                          (max(n1_l3_residuals)-min(n1_l3_residuals)))
+
+rmses <- rbind(rmses, n1_l3_rmses)
+
+rmses
+kable(rmses)
+
+# Plot observed vs fitted
+n1_l3_ob_pred <- data.frame(Observed=n1df$complied_bin,
+                         Predicted=fitted(n1_l3, type=response))
+
+ggplot(n1_l3_ob_pred, aes(Observed, Predicted)) +
+  geom_boxplot() +
+  theme_bw() +
+  ggtitle("Compliance with extortion demands:\nObserved vs. predicted")
+
+# FOREST PLOTS?
+# customize sjplots
+set_theme(theme = "blank",
+          geom.label.size = 0,
+          axis.textsize.x = .7,
+          axis.title.size = .9,
+          axis.angle.x=90,
+          axis.textsize.y = 0)
+
+# Random intercepts
+sjp.glmer(n1_l3, show.values = FALSE, sort.est= TRUE)
+# Forest plots
+set_theme(theme = "blank",
+          geom.label.size = 0,
+          axis.textsize.x = .7,
+          axis.title.size = .9,
+          axis.angle.x=90,
+          axis.textsize.y = .7)
+sjp.glmer(n1_l3, type="fe", show.values = FALSE)
+sjp.glmer(n1_l3, type="fe", show.values = FALSE, sort.est = TRUE)
+
+#htmlreg(list(n1, n1_l3))
+screenreg(list(n1, n1_l3))
+
+#htmlreg(list(n1, n1_l2, n1_l3))
+screenreg(list(n1, n1_l2, n1_l3))
+
+lrtest(n1, n1_l3)
+kable(lrtest(n1, n1_l3))
+
+anova(n1_l3, n1, test="LRT")
+kable(anova(n1_l3, n1, test="LRT"))
+
+lrtest(n1, n1_l2, n1_l3)
+kable(lrtest(n1, n1_l2, n1_l3))
+
+anova(n1_l3, n1_l2, n1, test="LRT")
+kable(anova(n1_l3, n1_l2, n1, test="LRT"))
+
+lrtest(n1_l2, n1_l3)
+kable(lrtest(n1_l2, n1_l3))
+
+anova(n1_l3, n1_l2, test="LRT")
+kable(anova(n1_l3, n1_l2, test="LRT"))
+
+```
+
+Now test excluding all three level vars and all two level vars to test their influence.
+
+```{r exc-two-and-three}
+
+## Exclude state then business level variables
+
+n1_l3_nostate <- glmer(complied_bin ~
+                    extortion_type +
+                    time +
+                    n_offenders +
+                    had_weapon +
+                    with_violence +
+                    reported +
+                    rep_extortion_victim +
+                    bribe_victim +
+                    size + hotrestbar + yearsquant +
+                    (1|CVE_UNICA) + (1|CVE_ENT),
+                  data=m1df,
+                  family = "binomial")
+
+summary(n1_l3_nostate)
+
+lrtest(n1_l3_nostate, n1_l3)
+kable(lrtest(n1_l3_nostate, n1_l3))
+
+anova(n1_l3_nostate, n1_l3, test="LRT")
+kable(anova(n1_l3_nostate, n1_l3, test="LRT"))
+
+## Only incident level
+
+n1_l3_nostate_nobus <- glmer(complied_bin ~
+                  extortion_type +
+                    time +
+                    n_offenders +
+                    had_weapon +
+                    with_violence +
+                    reported +
+                    (1|CVE_UNICA) + (1|CVE_ENT),
+                  data=m1df,
+                  family = "binomial")
+
+summary(n1_l3_nostate_nobus)
+
+lrtest(n1_l3_nostate_nobus, n1_l3_nostate)
+kable(lrtest(n1_l3_nostate_nobus, n1_l3_nostate))
+
+anova(n1_l3_nostate_nobus, n1_l3_nostate, test="LRT")
+kable(anova(n1_l3_nostate_nobus, n1_l3_nostate, test="LRT"))
+
+lrtest(n1_l3_nostate_nobus, n1_l3_nostate, n1_l3)
+kable(lrtest(n1_l3_nostate_nobus, n1_l3_nostate, n1_l3))
+
+anova(n1_l3_nostate_nobus, n1_l3_nostate, n1_l3, test="LRT")
+kable(anova(n1_l3_nostate_nobus, n1_l3_nostate, n1_l3, test="LRT"))
+
+lrtest(n1_l3_null, n1_l3_nostate_nobus, n1_l3_nostate, n1_l3)
+kable(lrtest(n1_l3_null, n1_l3_nostate_nobus, n1_l3_nostate, n1_l3))
+
+anova(n1_l3_null, n1_l3_nostate_nobus, n1_l3_nostate, n1_l3, test="LRT")
+kable(anova(n1_l3_null, n1_l3_nostate_nobus, n1_l3_nostate,
+              n1_l3, test="LRT"))
+
+
+
+## without the vars with a lot of missing
+
+n1_l3_no_viol_off_wea <- glmer(complied_bin ~
+                          extortion_type +
+                          time +
+                          reported +
+                          (1|CVE_UNICA) + (1|CVE_ENT),
+                        data=m1df,
+                        family = "binomial")
+
+summary(n1_l3_no_viol_off_wea)
+
+lrtest(n1_l3_no_viol_off_wea, n1_l3_nostate_nobus)
+kable(lrtest(n1_l3_no_viol_off_wea, n1_l3_nostate_nobus))
+
+anova(n1_l3_no_viol_off_wea, n1_l3_nostate_nobus, test="LRT")
+kable(anova(n1_l3_no_viol_off_wea, n1_l3_nostate_nobus, test="LRT"))
+
+lrtest(n1_l3_no_viol_off_wea, n1_l3_nostate_nobus, n1_l3_nostate, n1_l3)
+kable(lrtest(n1_l3_no_viol_off_wea, n1_l3_nostate_nobus,
+             n1_l3_nostate, n1_l3))
+
+anova(n1_l3_no_viol_off_wea, n1_l3_nostate_nobus,
+         n1_l3_nostate, n1_l3, test="LRT")
+kable(anova(n1_l3_no_viol_off_wea, n1_l3_nostate_nobus,
+               n1_l3_nostate, n1_l3, test="LRT"))
+
+lrtest(n1_l3_null, n1_l3_no_viol_off_wea, n1_l3_nostate_nobus,
+        n1_l3_nostate, n1_l3)
+kable(lrtest(n1_l3, n1_l3_no_viol_off_wea, n1_l3_nostate_nobus,
+                n1_l3_nostate, n1_l3))
+
+anova(n1_l3_null, n1_l3_no_viol_off_wea, n1_l3_nostate_nobus,
+        n1_l3_nostate, n1_l3, test="LRT")
+kable(anova(n1_l3_null, n1_l3_no_viol_off_wea, n1_l3_nostate_nobus,
+        n1_l3_nostate, n1_l3, test="LRT"))
+
+
+#htmlreg(list(n1_l3,sn1_l3, n1_l3_nostate, n1_l3_nostate_nobus,
+#             n1_l3_no_viol_off_wea, n1_l3_null))
+
+screenreg(list(n1_l3, n1_l3_nostate, n1_l3_nostate_nobus,
+               n1_l3_no_viol_off_wea, n1_l3_null))
+
+```
+
 
 # Benchmark stats
 
