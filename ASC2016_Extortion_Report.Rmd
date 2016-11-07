@@ -102,9 +102,9 @@ id.test <- function(x)
   # Takes a vector and calculates the index of dispersion
   # Then evaluates its significance for Overdispersion only
   # Returns a list with named numbers
-  mu <- mean(x)
+  mu <- mean(x, na.rm=TRUE)
   names(mu) <- "Mean"
-  v <- var(x)
+  v <- var(x, na.rm=TRUE)
   names(v) <- "Variance"
   n <- length(x)
   df <- n-1
@@ -1106,8 +1106,8 @@ kable(ext_dist)
 
 #Poissonnes tests
 n <- length(business_level_eda$extortions)
-mean_ext <- mean(business_level_eda$extortions)
-var_ext <- var(business_level_eda$extortions)
+mean_ext <- mean(business_level_eda$extortions, na.rm = TRUE)
+var_ext <- var(business_level_eda$extortions, na.rm = TRUE)
 
 mean_ext
 var_ext
@@ -1241,11 +1241,11 @@ for (i in 1:length(business_level_eda))
     summ_table[ind,1] <- colnames(business_level_eda)[i]
     summ_table[ind,2] <- length(business_level_eda[,i])
     summ_table[ind,3] <- length(business_level_eda[business_level_eda[,i] != 0,i])
-    summ_table[ind,4] <- sum(business_level_eda[,i])
-    summ_table[ind,5] <- mean(business_level_eda[,i])
-    summ_table[ind,6] <- sd(business_level_eda[,i])
-    summ_table[ind,7] <- min(business_level_eda[,i])
-    summ_table[ind,8] <- max(business_level_eda[,i])
+    summ_table[ind,4] <- sum(business_level_eda[,i], na.rm = TRUE)
+    summ_table[ind,5] <- mean(business_level_eda[,i], na.rm = TRUE)
+    summ_table[ind,6] <- sd(business_level_eda[,i], na.rm = TRUE)
+    summ_table[ind,7] <- min(business_level_eda[,i], na.rm = TRUE)
+    summ_table[ind,8] <- max(business_level_eda[,i], na.rm = TRUE)
   }
 
   else if (colnames(business_level_eda)[i] %in%
@@ -1310,6 +1310,7 @@ summ_table <- summ_table[!is.na(summ_table[,1]),]
 
 summ_table[,c(5:8)] <- round(summ_table[,c(5:8)],3)
 
+summ_table <- summ_table[-1,]
 summ_table
 
 kable(summ_table, row.names = F)
@@ -2174,7 +2175,7 @@ n1 <- glm(complied_bin ~
            reported +
            rep_extortion_victim +
            bribe_victim +
-           size + hotrestbar + yearsquant +
+           size + subsector + yearsquant +
            loghoms + logpop,
          data=m1df,
          family = "binomial")
@@ -2219,7 +2220,7 @@ ln1 <- lm(as.integer(complied_bin) ~
            reported +
            rep_extortion_victim +
            bribe_victim +
-           size + hotrestbar + yearsquant +
+           size + subsector + yearsquant +
            loghoms + logpop,
          data=m1df)
 
@@ -2282,7 +2283,7 @@ n1_nostate <- glm(complied_bin ~
                     reported +
                     rep_extortion_victim +
                     bribe_victim +
-                    size + hotrestbar + yearsquant,
+                    size + subsector + yearsquant,
                   data=m1df,
                   family = "binomial")
 
@@ -2387,7 +2388,7 @@ n1_l2 <- glmer(complied_bin ~
             reported +
             rep_extortion_victim +
             bribe_victim +
-            size + hotrestbar + yearsquant +
+            size + subsector + yearsquant +
             loghoms + logpop +
             (1|CVE_UNICA),
           data=m1df,
@@ -2527,7 +2528,7 @@ n1_l3 <- glmer(complied_bin ~
             reported +
             rep_extortion_victim +
             bribe_victim +
-            size + hotrestbar + yearsquant +
+            size + subsector + yearsquant +
             loghoms + logpop +
             (1|CVE_UNICA) +
             (1|CVE_ENT),
@@ -2715,7 +2716,7 @@ n1_l3_nostate <- glmer(complied_bin ~
                     reported +
                     rep_extortion_victim +
                     bribe_victim +
-                    size + hotrestbar + yearsquant +
+                    size + subsector + yearsquant +
                     (1|CVE_UNICA) + (1|CVE_ENT),
                   data=m1df,
                   family = "binomial")
