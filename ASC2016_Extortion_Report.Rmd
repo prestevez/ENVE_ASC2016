@@ -60,7 +60,7 @@ Area-level characteristics:
 
 We first check details of the session and system, and for reproducibility, we set the random seed.
 
-```{r session}
+```{r session, cache=FALSE}
 starttime <- proc.time()
 date()
 sessionInfo()
