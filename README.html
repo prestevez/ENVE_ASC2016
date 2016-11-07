@@ -123,9 +123,6 @@ $(document).ready(function () {
 <div id="analisis-elaborado-para-presentacion-en-asc2016" class="section level2">
 <h2>Análisis elaborado para presentación en ASC2016</h2>
 <p><em>Patricio R. Estévez Soto</em></p>
-</div>
-<div id="version-0.1-doi" class="section level2">
-<h2>Versión 0.1 <a href="https://zenodo.org/badge/latestdoi/69736722"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgICAgd2lkdGg9IjE3OCIgaGVpZ2h0PSIyMCI+CiAgICAgICAgPGxpbmVhckdyYWRpZW50IGlkPSJiIiB4Mj0iMCIgeTI9IjEwMCUiPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNiYmIiIHN0b3Atb3BhY2l0eT0iLjEiLz4KICAgICAgICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLW9wYWNpdHk9Ii4xIi8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgICAgICA8bWFzayBpZD0iYSIgd2lkdGg9IjE3OCIgaGVpZ2h0PSIyMCI+CiAgICAgICAgICAgIDxyZWN0IHdpZHRoPSIxNzgiIGhlaWdodD0iMjAiIHJ4PSIzIgogICAgICAgICAgICBmaWxsPSIjZmZmIi8+CiAgICAgICAgPC9tYXNrPgogICAgICAgIDxnIG1hc2s9InVybCgjYSkiPgogICAgICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMCAwaDMxdjIwSDB6IiAvPgogICAgICAgICAgICA8cGF0aCBmaWxsPSIjMDA3ZWM2IgogICAgICAgICAgICBkPSJNMzEgMGgxNDd2MjBIMzF6IgogICAgICAgICAgICAvPgogICAgICAgICAgICA8cGF0aCBmaWxsPSJ1cmwoI2IpIiBkPSJNMCAwaDE3OHYyMEgweiIgLz4KICAgICAgICA8L2c+CiAgICAgICAgPGcgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkRlamFWdSBTYW5zLAogICAgICAgIFZlcmRhbmEsR2VuZXZhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTEiPgogICAgICAgICAgICA8dGV4dCB4PSIxNiIgeT0iMTUiIGZpbGw9IiMwMTAxMDEiCiAgICAgICAgICAgIGZpbGwtb3BhY2l0eT0iLjMiPgogICAgICAgICAgICAgICAgRE9JCiAgICAgICAgICAgIDwvdGV4dD4KICAgICAgICAgICAgPHRleHQgeD0iMTYiIHk9IjE0Ij4KICAgICAgICAgICAgICAgIERPSQogICAgICAgICAgICA8L3RleHQ+CiAgICAgICAgICAgIDx0ZXh0IHg9IjEwNCIKICAgICAgICAgICAgeT0iMTUiIGZpbGw9IiMwMTAxMDEiIGZpbGwtb3BhY2l0eT0iLjMiPgogICAgICAgICAgICAgICAgMTAuNTI4MS96ZW5vZG8uMTYyMjA0CiAgICAgICAgICAgIDwvdGV4dD4KICAgICAgICAgICAgPHRleHQgeD0iMTA0IiB5PSIxNCI+CiAgICAgICAgICAgICAgICAxMC41MjgxL3plbm9kby4xNjIyMDQKICAgICAgICAgICAgPC90ZXh0PgogICAgICAgIDwvZz4KICAgIDwvc3ZnPg==" alt="DOI" /></a></h2>
 <p>Estas instrucciones detallan brevemente el procedimiento necesario para correr exitosamente los scripts diseñados para el análisis de la ENVE 2014 en R.</p>
 <p>Dado que los microdatos de la ENVE son de acceso controlado, este script fue enviado a la Dirección de Microdatos del INEGI, quien lo ejecuta en nombre del investigador.</p>
 <p>La ejecución consta principalmente de dos partes, la <strong>Instalación de paquetes requeridos</strong>, y la <strong>Ejecución del script</strong>.</p>
@@ -150,6 +147,7 @@ $(document).ready(function () {
 <li><strong>sjPlot</strong>: Elabora gráficas para modelos lme4</li>
 <li><strong>rmarkdown</strong>: Utilizado en combinación con knitr</li>
 <li><strong>arm</strong>: Requerido por sjPlot</li>
+<li><strong>RColorBrewer</strong>: Requerido por sjPlot</li>
 </ul>
 <p>Algunos de estos paquetes pueden ya estar instalados en nuestra computadora. Aquellos que no estén instalados pueden instalarse mediante los siguientes comandos:</p>
 <pre><code>install.packages(&quot;foreign&quot;)
@@ -166,7 +164,8 @@ install.packages(&quot;pscl&quot;)
 install.packages(&quot;sjstats&quot;)
 install.packages(&quot;sjPlot&quot;)
 install.packages(&quot;rmarkdown&quot;)
-install.packages(&quot;arm&quot;)</code></pre>
+install.packages(&quot;arm&quot;)
+install.packages(&quot;RColorBrewer&quot;)</code></pre>
 <p>Para verificar si los paquetes se encuentran instalados puede correr lo siguientes comandos:</p>
 <pre><code>packages &lt;- c(&quot;foreign&quot;,
               &quot;ggplot2&quot;,
@@ -182,7 +181,8 @@ install.packages(&quot;arm&quot;)</code></pre>
               &quot;sjstats&quot;,
               &quot;sjPlot&quot;,
               &quot;rmarkdown&quot;,
-              &quot;arm&quot;)
+              &quot;arm&quot;,
+              &quot;RColorBrewer&quot;)
 
 
 packages %in% rownames(installed.packages())</code></pre>
@@ -194,7 +194,7 @@ packages %in% rownames(installed.packages())</code></pre>
 <p>Además de la instalación de los paquetes necesarios, descrita en la sección anterior, la única intervención necesaria es colocar los archivos .dbf que contienen los datos de la ENVE en el folder del proyecto y asignar el <em>working directory</em> en R al folder del proyecto.</p>
 <div id="archivo-.dbf-enve-2014" class="section level3">
 <h3>Archivo .dbf ENVE 2014</h3>
-<p>Copie los archivos <strong>“TR_ENVE_CUES_2014.dbf”</strong> y <strong>TR_ENVE_DELITOS2014.dbf</strong> al folder de este proyecto.</p>
+<p>Copie los archivos <strong>.dbf</strong> correspondientes al cuestionario principal y al módulo de deltios de la ENVE 2014 al folder de este proyecto.</p>
 </div>
 <div id="establecer-working-directory-en-r" class="section level3">
 <h3>Establecer working directory en R</h3>

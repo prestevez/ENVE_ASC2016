@@ -4,8 +4,6 @@
 
 *Patricio R. Estévez Soto*  
 
-## Versión 0.1 [![DOI](https://zenodo.org/badge/69736722.svg)](https://zenodo.org/badge/latestdoi/69736722)
-
 Estas instrucciones detallan brevemente el procedimiento necesario para correr exitosamente los scripts diseñados para el análisis de la ENVE 2014 en R.
 
 Dado que los microdatos de la ENVE son de acceso controlado, este script fue enviado a la Dirección de Microdatos del INEGI, quien lo ejecuta en nombre del investigador.
@@ -33,6 +31,7 @@ Los paquetes requeridos por este proyecto son los siguientes:
 - **sjPlot**: Elabora gráficas para modelos lme4
 - **rmarkdown**: Utilizado en combinación con knitr
 - **arm**: Requerido por sjPlot
+- **RColorBrewer**: Requerido por sjPlot
 
 
 Algunos de estos paquetes pueden ya estar instalados en nuestra computadora. Aquellos que no estén instalados pueden instalarse mediante los siguientes comandos:
@@ -53,6 +52,7 @@ install.packages("sjstats")
 install.packages("sjPlot")
 install.packages("rmarkdown")
 install.packages("arm")
+install.packages("RColorBrewer")
 ```
 
 Para verificar si los paquetes se encuentran instalados puede correr lo siguientes comandos:
@@ -72,7 +72,8 @@ packages <- c("foreign",
               "sjstats",
               "sjPlot",
               "rmarkdown",
-              "arm")
+              "arm",
+              "RColorBrewer")
 
 
 packages %in% rownames(installed.packages())
@@ -88,7 +89,7 @@ Además de la instalación de los paquetes necesarios, descrita en la sección a
 
 ### Archivo .dbf ENVE 2014
 
-Copie los archivos **"TR_ENVE_CUES_2014.dbf"** y **TR_ENVE_DELITOS2014.dbf** al folder de este proyecto.
+Copie los archivos **.dbf** correspondientes al cuestionario principal y al módulo de deltios de la ENVE 2014 al folder de este proyecto.
 
 ### Establecer working directory en R
 
